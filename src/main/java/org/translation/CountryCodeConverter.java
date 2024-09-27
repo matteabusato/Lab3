@@ -1,5 +1,7 @@
 package org.translation;
 
+import org.json.JSONArray;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -11,7 +13,8 @@ import java.util.List;
  */
 public class CountryCodeConverter {
 
-    // TODO Task: pick appropriate instance variable(s) to store the data necessary for this class
+    private final JSONArray codesToCountries;
+    private final JSONArray countriesToCodes;
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -27,18 +30,29 @@ public class CountryCodeConverter {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public CountryCodeConverter(String filename) {
-
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            // TODO Task: use lines to populate the instance variable(s)
+            String jsonDataCodesToCountries = "[";
+            String jsonDataCountriesToCodes = "[";
 
+            for (String line : lines) {
+                String[] parts = line.split("\t");
+                if (parts.length > 3) {
+                    jsonDataCodesToCountries += String.format("{\"%s\" : \"%s\"}, ", parts[2], parts[0]);
+                    jsonDataCountriesToCodes += String.format("{\"%s\" : \"%s\"}, ", parts[0], parts[2]);
+                }
+            }
+            jsonDataCodesToCountries += "]";
+            jsonDataCountriesToCodes += "]";
+
+            codesToCountries = new JSONArray(jsonDataCodesToCountries);
+            countriesToCodes = new JSONArray(jsonDataCountriesToCodes);
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
-
     }
 
     /**
@@ -47,8 +61,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return code;
+        return codesToCountries.getJSONObject(0).getString(code);
     }
 
     /**
@@ -57,8 +70,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return country;
+        return countriesToCodes.get(country);
     }
 
     /**
@@ -66,7 +78,6 @@ public class CountryCodeConverter {
      * @return how many countries are included in this code converter.
      */
     public int getNumCountries() {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return 0;
+        return codesToCountries.size();
     }
 }
