@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class CountryCodeConverter {
 
+    public static final int TAB_INDEX_MAX = 3;
     private Map<String, String> codesToCountries = new HashMap<String, String>();
     private Map<String, String> countriesToCodes = new HashMap<String, String>();
 
@@ -36,7 +37,7 @@ public class CountryCodeConverter {
 
             for (int i = 1; i < lines.size(); i++) {
                 String[] parts = lines.get(i).split("\t");
-                if (parts.length > 3) {
+                if (parts.length > TAB_INDEX_MAX) {
                     codesToCountries.put(parts[2].toLowerCase(), parts[0]);
                     countriesToCodes.put(parts[0], parts[2].toLowerCase());
                 }
