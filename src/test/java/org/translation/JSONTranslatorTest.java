@@ -20,7 +20,6 @@ public class JSONTranslatorTest {
     public void getCountries() {
         List<String> languages = jsonTranslator.getCountries();
         assertEquals("There should be 193 countries but got " + languages.size(), 193, languages.size());
-
     }
 
     @Test

@@ -1,5 +1,7 @@
 package org.translation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,13 +22,7 @@ public class Main {
      * @param args not used by the program
      */
     public static void main(String[] args) {
-
-        // TODO Task: once you finish the JSONTranslator,
-        //            you can use it here instead of the InLabByHandTranslator
-        //            to try out the whole program!
-        // Translator translator = new JSONTranslator(null);
-        Translator translator = new InLabByHandTranslator();
-
+        Translator translator = new JSONTranslator();
         runProgram(translator);
     }
 
@@ -69,12 +65,19 @@ public class Main {
 
     // Note: CheckStyle is configured so that we don't need javadoc for private methods
     private static String promptForCountry(Translator translator) {
-        List<String> countries = translator.getCountries();
+        CountryCodeConverter converter = new CountryCodeConverter();
+        List<String> countriesCodes = translator.getCountries();
         // TODO Task: replace the following println call, sort the countries alphabetically,
         //            and print them out; one per line
         //      hint: class Collections provides a static sort method
         // TODO Task: convert the country codes to the actual country names before sorting
-        System.out.println(countries);
+        List<String> countriesNames = new ArrayList<String>();
+        countriesCodes.forEach(country -> countriesNames.add(converter.fromCountryCode(country)));
+
+        Collections.sort(countriesNames);
+        countriesNames.forEach(country -> {
+            System.out.println(country);
+        });
 
         System.out.println("select a country from above:");
 

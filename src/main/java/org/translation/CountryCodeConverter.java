@@ -1,20 +1,20 @@
 package org.translation;
 
-import org.json.JSONArray;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides the service of converting country codes to their names.
  */
 public class CountryCodeConverter {
 
-    private final JSONArray codesToCountries;
-    private final JSONArray countriesToCodes;
+    private Map<String, String> codesToCountries = new HashMap<String, String>();
+    private Map<String, String> countriesToCodes = new HashMap<String, String>();
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -34,21 +34,13 @@ public class CountryCodeConverter {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            String jsonDataCodesToCountries = "[";
-            String jsonDataCountriesToCodes = "[";
-
-            for (String line : lines) {
-                String[] parts = line.split("\t");
+            for (int i = 1; i < lines.size(); i++) {
+                String[] parts = lines.get(i).split("\t");
                 if (parts.length > 3) {
-                    jsonDataCodesToCountries += String.format("{\"%s\" : \"%s\"}, ", parts[2], parts[0]);
-                    jsonDataCountriesToCodes += String.format("{\"%s\" : \"%s\"}, ", parts[0], parts[2]);
+                    codesToCountries.put(parts[2].toLowerCase(), parts[0]);
+                    countriesToCodes.put(parts[0], parts[2].toLowerCase());
                 }
             }
-            jsonDataCodesToCountries += "]";
-            jsonDataCountriesToCodes += "]";
-
-            codesToCountries = new JSONArray(jsonDataCodesToCountries);
-            countriesToCodes = new JSONArray(jsonDataCountriesToCodes);
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
@@ -61,7 +53,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        return codesToCountries.getJSONObject(0).getString(code);
+        return codesToCountries.get(code);
     }
 
     /**
